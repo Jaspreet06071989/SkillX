@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SkillX Workshop Priority Selection</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --primary:#1f3c88;
+  --accent:#f37021;
+  --bg:#f4f6fb;
+  --card:#ffffff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{
+  background:var(--bg);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+/* MAIN CARD */
+.wrapper{
+  background:var(--card);
+  max-width:520px;
+  width:100%;
+  border-radius:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,.15);
+  overflow:hidden;
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,var(--primary),#3456c1);
+  color:#fff;
+  padding:30px 25px;
+  text-align:center;
+}
+.header h2{
+  font-size:1.6rem;
+  margin-bottom:6px;
+}
+.header p{
+  font-size:.95rem;
+  opacity:.9;
+}
+
+/* FORM */
+form{
+  padding:30px 25px 35px;
+}
+
+.priority{
+  margin-bottom:28px;
+}
+
+.priority h3{
+  color:var(--primary);
+  font-size:1.05rem;
+  margin-bottom:10px;
+}
+
+select{
+  width:100%;
+  padding:11px 12px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  margin-bottom:10px;
+  font-size:.95rem;
+  background:#fff;
+}
+
+select:disabled{
+  background:#f0f0f0;
+}
+
+/* BUTTON */
+button{
+  width:100%;
+  padding:13px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(135deg,var(--accent),#ff944d);
+  color:#fff;
+  font-size:1rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:.3s;
+}
+
+button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(243,112,33,.35);
+}
+
+/* FOOTER NOTE */
+.note{
+  text-align:center;
+  font-size:.8rem;
+  color:#777;
+  margin-top:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+  <div class="header">
+    <h2>SkillX Workshop Selection</h2>
+    <p>Select your preferred workshops (Priority-wise)</p>
+  </div>
+
+  <form id="workshopForm">
+
+    <!-- PRIORITY 1 -->
+    <div class="priority">
+      <h3>Priority 1</h3>
+      <select class="module">
+        <option value="">-- Select Module --</option>
+        <option value="Module1">Digital Power Skills</option>
+        <option value="Module2">Communication & Personal Branding</option>
+        <option value="Module3">Business & Financial Smart Skills</option>
+      </select>
+
+      <select class="workshop" disabled>
+        <option value="">-- Select Workshop --</option>
+      </select>
+    </div>
+
+    <!-- PRIORITY 2 -->
+    <div class="priority">
+      <h3>Priority 2</h3>
+      <select class="module">
+        <option value="">-- Select Module --</option>
+        <option value="Module1">Digital Power Skills</option>
+        <option value="Module2">Communication & Personal Branding</option>
+        <option value="Module3">Business & Financial Smart Skills</option>
+      </select>
+
+      <select class="workshop" disabled>
+        <option value="">-- Select Workshop --</option>
+      </select>
+    </div>
+
+    <!-- PRIORITY 3 -->
+    <div class="priority">
+      <h3>Priority 3</h3>
+      <select class="module">
+        <option value="">-- Select Module --</option>
+        <option value="Module1">Digital Power Skills</option>
+        <option value="Module2">Communication & Personal Branding</option>
+        <option value="Module3">Business & Financial Smart Skills</option>
+      </select>
+
+      <select class="workshop" disabled>
+        <option value="">-- Select Workshop --</option>
+      </select>
+    </div>
+
+    <button type="submit">Submit Preferences</button>
+
+    <div class="note">
+      GJIMT SkillX | Zero to Hero Workshops
+    </div>
+
+  </form>
+
+</div>
+
+<script>
+/* ================= WORKSHOP DATA ================= */
+const workshopData = {
+  Module1: [
+    "AI – Enabled Learning",
+    "Excel Essentials + Power BI Analytics",
+    "Web Development",
+    "Information Security",
+    "Cloud Computing"
+  ],
+  Module2: [
+    "Functional English",
+    "Public Speaking",
+    "Canva Based Photo/Video Editing"
+  ],
+  Module3: [
+    "AI for Business Decision-Making",
+    "Professional Resume Building and LinkedIn Optimization",
+    "Tally Accounting Basics",
+    "Prompt Engineering",
+    "Vedic Maths"
+  ]
+};
+
+const moduleSelects = document.querySelectorAll(".module");
+const workshopSelects = document.querySelectorAll(".workshop");
+
+/* Populate workshops */
+moduleSelects.forEach((moduleSelect, index) => {
+  moduleSelect.addEventListener("change", function () {
+    const workshopSelect = workshopSelects[index];
+    workshopSelect.innerHTML = `<option value="">-- Select Workshop --</option>`;
+    workshopSelect.disabled = true;
+
+    if (!this.value) return;
+
+    workshopData[this.value].forEach(workshop => {
+      const opt = document.createElement("option");
+      opt.value = workshop;
+      opt.textContent = workshop;
+      workshopSelect.appendChild(opt);
+    });
+
+    workshopSelect.disabled = false;
+    disableDuplicateWorkshops();
+  });
+});
+
+workshopSelects.forEach(sel => sel.addEventListener("change", disableDuplicateWorkshops));
+
+function disableDuplicateWorkshops(){
+  const selected = [...workshopSelects].map(s => s.value).filter(v => v);
+  workshopSelects.forEach(sel => {
+    [...sel.options].forEach(opt => {
+      if(opt.value && selected.includes(opt.value) && opt.value !== sel.value){
+        opt.disabled = true;
+      }else{
+        opt.disabled = false;
+      }
+    });
+  });
+}
+
+/* ================= GOOGLE SHEET SUBMIT ================= */
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxjJpauKJNXne0rvjbJJHbzjH0E6SPZk6HyhS9mdJEnG50NY2j5bayz0WzzJevRNwc/exec";
+
+document.getElementById("workshopForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const payload = {
+    p1Module: moduleSelects[0].selectedOptions[0].text,
+    p1Workshop: workshopSelects[0].value,
+    p2Module: moduleSelects[1].selectedOptions[0].text,
+    p2Workshop: workshopSelects[1].value,
+    p3Module: moduleSelects[2].selectedOptions[0].text,
+    p3Workshop: workshopSelects[2].value
+  };
+
+  fetch(WEB_APP_URL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  })
+  .then(res=>res.json())
+  .then(data=>{
+    alert("Preferences submitted successfully!");
+    document.getElementById("workshopForm").reset();
+    workshopSelects.forEach(w=>w.disabled=true);
+  })
+  .catch(()=>alert("Submission failed. Please try again."));
+});
+</script>
+
+</body>
+</html>
